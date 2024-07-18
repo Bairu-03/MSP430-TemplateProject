@@ -1,7 +1,7 @@
 /*
  * OLED.h
  *
- *  Created on: 2024Äê7ÔÂ14ÈÕ
+ *  Created on: 2024å¹´7æœˆ14æ—¥
  *      Author: Bairu
  */
 
@@ -10,12 +10,12 @@
 
 #include <stdint.h>
 
-#define OLED_ADDRESS 0x78   //OLEDÉè±¸µØÖ·
+#define OLED_ADDRESS 0x3C   //OLEDè®¾å¤‡åœ°å€
 
-#define OLED_WriteCom_Addr  0x00    //´Ó»úĞ´Ö¸ÁîµØÖ·
-#define OLED_WriteData_Addr 0x40    //´Ó»úĞ´Êı¾İµØÖ·
+#define OLED_WriteCom_Addr  0x00    //ä»æœºå†™æŒ‡ä»¤åœ°å€
+#define OLED_WriteData_Addr 0x40    //ä»æœºå†™æ•°æ®åœ°å€
 
-/********************¹öÆÁ²ÎÊıºê¶¨Òå********************/
+/********************æ»šå±å‚æ•°å®å®šä¹‰********************/
 
 #define Line1 0x00
 #define Line2 0x01
@@ -29,7 +29,7 @@
 #define ScrL 0x27
 #define ScrR 0x26
 
-/**********************º¯ÊıÉùÃ÷************************/
+/**********************å‡½æ•°å£°æ˜************************/
 
 void OLED_WriteCommand(uint8_t I2C_Command);
 void OLED_WriteData(uint8_t IIC_Data);

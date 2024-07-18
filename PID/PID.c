@@ -1,18 +1,18 @@
 /*
  * PID.c
  *
- *  Created on: 2024Äê7ÔÂ17ÈÕ
+ *  Created on: 2024å¹´7æœˆ17æ—¥
  *      Author: Bairu
  */
 
 #include "PID.h"
 
 /**
- * @brief  Ö¸Êý¼ÓÈ¨ÒÆ¶¯Æ½¾ùÂË²¨
- * @param  input ÊäÈëÖµ
- * @param  filtered_value ÉÏ´ÎÂË²¨ºóµÄÊäÈëÖµ
- * @param  alpha ÂË²¨ÏµÊý
- * @retval ÂË²¨½á¹û
+ * @brief  æŒ‡æ•°åŠ æƒç§»åŠ¨å¹³å‡æ»¤æ³¢
+ * @param  input è¾“å…¥å€¼
+ * @param  filtered_value ä¸Šæ¬¡æ»¤æ³¢åŽçš„è¾“å…¥å€¼
+ * @param  alpha æ»¤æ³¢ç³»æ•°
+ * @retval æ»¤æ³¢ç»“æžœ
  */
 float exponential_filter(float input, float filtered_value, float alpha)
 {
@@ -20,17 +20,17 @@ float exponential_filter(float input, float filtered_value, float alpha)
 }
 
 /**
- * @brief  PID²ÎÊý³õÊ¼»¯
- * @param  *pid PID²ÎÊý½á¹¹Ìå±äÁ¿
- * @param  Kp ±ÈÀýÏîÏµÊý
- * @param  Ki »ý·ÖÏîÏµÊý
- * @param  Kd Î¢·ÖÏîÏµÊý
- * @param  target Ä¿±êÖµ
- * @param  minIntegral »ý·ÖÏÞ·ù-×îÐ¡Öµ
- * @param  maxIntegral »ý·ÖÏÞ·ù-×î´óÖµ
- * @param  minOutput PIDÊä³öÏÞ·ù-×îÐ¡Öµ
- * @param  maxOutput PIDÊä³öÏÞ·ù-×î´óÖµ
- * @retval ÎÞ
+ * @brief  PIDå‚æ•°åˆå§‹åŒ–
+ * @param  *pid PIDå‚æ•°ç»“æž„ä½“å˜é‡
+ * @param  Kp æ¯”ä¾‹é¡¹ç³»æ•°
+ * @param  Ki ç§¯åˆ†é¡¹ç³»æ•°
+ * @param  Kd å¾®åˆ†é¡¹ç³»æ•°
+ * @param  target ç›®æ ‡å€¼
+ * @param  minIntegral ç§¯åˆ†é™å¹…-æœ€å°å€¼
+ * @param  maxIntegral ç§¯åˆ†é™å¹…-æœ€å¤§å€¼
+ * @param  minOutput PIDè¾“å‡ºé™å¹…-æœ€å°å€¼
+ * @param  maxOutput PIDè¾“å‡ºé™å¹…-æœ€å¤§å€¼
+ * @retval æ— 
  */
 void PID_Init(PID *pid, float Kp, float Ki, float Kd, float target,
               float minIntegral, float maxIntegral,
@@ -50,10 +50,10 @@ void PID_Init(PID *pid, float Kp, float Ki, float Kd, float target,
 }
 
 /**
- * @brief  ÖØÉèPIDÄ¿±êÖµ
- * @param  *pid PID²ÎÊý½á¹¹Ìå±äÁ¿
- * @param  target Ä¿±êÖµ
- * @retval ÎÞ
+ * @brief  é‡è®¾PIDç›®æ ‡å€¼
+ * @param  *pid PIDå‚æ•°ç»“æž„ä½“å˜é‡
+ * @param  target ç›®æ ‡å€¼
+ * @retval æ— 
  */
 void PID_ResetTarget(PID *pid, float target)
 {
@@ -61,35 +61,35 @@ void PID_ResetTarget(PID *pid, float target)
 }
 
 /**
- * @brief  Î»ÖÃÊ½PIDÔËËã¡£
- *          µ±ÊäÈëÖµÓëÄ¿±êÖµ´æÔÚ²î¾àÊ±£¬PIDÔËËã½á¹û»á³ÖÐø±ä»¯Ö±ÖÁ´ïµ½ÏÞ·ùÖµ¡£
- *          µ±ÊäÈëÖµÓëÄ¿±êÖµÒ»ÖÂºó£¬PIDÔËËã½á¹û½«ÎÈ¶¨ÔÚÄ³Ò»Öµ¡£
- * @param  *pid PID²ÎÊý½á¹¹Ìå±äÁ¿
- * @param  input ¼ì²âµ½µÄÊµÊ±Öµ
- * @retval ÎÞ
+ * @brief  ä½ç½®å¼PIDè¿ç®—ã€‚
+ *          å½“è¾“å…¥å€¼ä¸Žç›®æ ‡å€¼å­˜åœ¨å·®è·æ—¶ï¼ŒPIDè¿ç®—ç»“æžœä¼šæŒç»­å˜åŒ–ç›´è‡³è¾¾åˆ°é™å¹…å€¼ã€‚
+ *          å½“è¾“å…¥å€¼ä¸Žç›®æ ‡å€¼ä¸€è‡´åŽï¼ŒPIDè¿ç®—ç»“æžœå°†ç¨³å®šåœ¨æŸä¸€å€¼ã€‚
+ * @param  *pid PIDå‚æ•°ç»“æž„ä½“å˜é‡
+ * @param  input æ£€æµ‹åˆ°çš„å®žæ—¶å€¼
+ * @retval æ— 
  */
 float PID_Compute(PID *pid, float input)
 {
-    // ¶ÔÊäÈëÖµ½øÐÐÂË²¨
-    pid->filtered_input = exponential_filter(input, pid->filtered_input, 0.2); // 0.2ÎªÂË²¨ÏµÊý
+    // å¯¹è¾“å…¥å€¼è¿›è¡Œæ»¤æ³¢
+    pid->filtered_input = exponential_filter(input, pid->filtered_input, 0.2); // 0.2ä¸ºæ»¤æ³¢ç³»æ•°
 
-    float error = pid->target - pid->filtered_input;    // ¼ÆËãÎó²î
+    float error = pid->target - pid->filtered_input;    // è®¡ç®—è¯¯å·®
 
-    float p_term = pid->Kp * error;    // ±ÈÀýÏî
-    float i_term = pid->integral + pid->Ki * error;    // »ý·ÖÏî
-    float d_term = pid->Kd * (error - pid->last_error);    // Î¢·ÖÏî
+    float p_term = pid->Kp * error;    // æ¯”ä¾‹é¡¹
+    float i_term = pid->integral + pid->Ki * error;    // ç§¯åˆ†é¡¹
+    float d_term = pid->Kd * (error - pid->last_error);    // å¾®åˆ†é¡¹
 
-    // »ý·ÖÏÞ·ù
+    // ç§¯åˆ†é™å¹…
     if(i_term > pid->maxIntegral) i_term = pid->maxIntegral;
     else if(i_term < pid->minIntegral) i_term = pid->minIntegral;
 
-    // ¸üÐÂ»ý·ÖÖµºÍÉÏ´ÎÎó²î
+    // æ›´æ–°ç§¯åˆ†å€¼å’Œä¸Šæ¬¡è¯¯å·®
     pid->integral = i_term;
     pid->last_error = error;
 
     float PID_Output = p_term + i_term + d_term;
 
-    // PIDÊä³öÏÞ·ù
+    // PIDè¾“å‡ºé™å¹…
     if(PID_Output > pid->maxOutput) PID_Output = pid->maxOutput;
     else if(PID_Output < pid->minOutput) PID_Output = pid->minOutput;
 

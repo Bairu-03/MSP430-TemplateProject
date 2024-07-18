@@ -1,29 +1,29 @@
 /*
  * PID.h
  *
- *  Created on: 2024Äê7ÔÂ17ÈÕ
+ *  Created on: 2024å¹´7æœˆ17æ—¥
  *      Author: Bairu
  */
 
 #ifndef PID_PID_H_
 #define PID_PID_H_
 
-// PIDµÄ×÷ÓÃ¸ÅÊö£º
-// 1¡¢P²úÉúÏìÓ¦ËÙ¶ÈºÍÁ¦¶È£¬¹ıĞ¡ÏìÓ¦Âı£¬¹ı´ó»á²úÉúÕñµ´£¬ÊÇIºÍDµÄ»ù´¡¡£
-// 2¡¢IÔÚÓĞÏµÍ³Îó²îºÍÍâÁ¦×÷ÓÃÊ±Ïû³ıÆ«²î¡¢Ìá¸ß¾«¶È£¬Í¬Ê±Ò²»áÔö¼ÓÏìÓ¦ËÙ¶È£¬²úÉú¹ı³å£¬¹ı´ó»á²úÉúÕñµ´¡£
-// 3¡¢DÒÖÖÆ¹ı³åºÍÕñµ´£¬¹ıĞ¡ÏµÍ³»á¹ı³å£¬¹ı´ó»á¼õÂıÏìÓ¦ËÙ¶È¡£DµÄÁíÍâÒ»¸ö×÷ÓÃÊÇµÖ¿¹Íâ½çµÄÍ»·¢¸ÉÈÅ£¬×èÖ¹ÏµÍ³µÄÍ»±ä¡£
+// PIDçš„ä½œç”¨æ¦‚è¿°ï¼š
+// 1ã€Päº§ç”Ÿå“åº”é€Ÿåº¦å’ŒåŠ›åº¦ï¼Œè¿‡å°å“åº”æ…¢ï¼Œè¿‡å¤§ä¼šäº§ç”ŸæŒ¯è¡ï¼Œæ˜¯Iå’ŒDçš„åŸºç¡€ã€‚
+// 2ã€Iåœ¨æœ‰ç³»ç»Ÿè¯¯å·®å’Œå¤–åŠ›ä½œç”¨æ—¶æ¶ˆé™¤åå·®ã€æé«˜ç²¾åº¦ï¼ŒåŒæ—¶ä¹Ÿä¼šå¢åŠ å“åº”é€Ÿåº¦ï¼Œäº§ç”Ÿè¿‡å†²ï¼Œè¿‡å¤§ä¼šäº§ç”ŸæŒ¯è¡ã€‚
+// 3ã€DæŠ‘åˆ¶è¿‡å†²å’ŒæŒ¯è¡ï¼Œè¿‡å°ç³»ç»Ÿä¼šè¿‡å†²ï¼Œè¿‡å¤§ä¼šå‡æ…¢å“åº”é€Ÿåº¦ã€‚Dçš„å¦å¤–ä¸€ä¸ªä½œç”¨æ˜¯æŠµæŠ—å¤–ç•Œçš„çªå‘å¹²æ‰°ï¼Œé˜»æ­¢ç³»ç»Ÿçš„çªå˜ã€‚
 
-// PID²ÎÊı½á¹¹Ìå
+// PIDå‚æ•°ç»“æ„ä½“
 typedef struct {
-    float Kp;  // ±ÈÀıÏµÊı
-    float Ki;  // »ı·ÖÏµÊı
-    float Kd;  // Î¢·ÖÏµÊı
-    float target; // Ä¿±êÖµ
-    float last_error; // ÉÏÒ»´ÎÆ«²î
-    float integral;   // »ı·ÖÖµ
-    float filtered_input; // ÂË²¨ºóµÄÊäÈëÖµ
-    float maxIntegral, minIntegral; //»ı·ÖÏŞ·ù
-    float maxOutput, minOutput; //Êä³öÏŞ·ù
+    float Kp;  // æ¯”ä¾‹ç³»æ•°
+    float Ki;  // ç§¯åˆ†ç³»æ•°
+    float Kd;  // å¾®åˆ†ç³»æ•°
+    float target; // ç›®æ ‡å€¼
+    float last_error; // ä¸Šä¸€æ¬¡åå·®
+    float integral;   // ç§¯åˆ†å€¼
+    float filtered_input; // æ»¤æ³¢åçš„è¾“å…¥å€¼
+    float maxIntegral, minIntegral; //ç§¯åˆ†é™å¹…
+    float maxOutput, minOutput; //è¾“å‡ºé™å¹…
 } PID;
 
 void PID_Init(PID *pid, float Kp, float Ki, float Kd, float target,
@@ -36,7 +36,7 @@ float PID_Compute(PID *pid, float input);
 #endif /* PID_PID_H_ */
 
 /************************************************************************
- *                  PID¿ØÖÆÀı³Ì - ±àÂëµç»ú×ªËÙ¿ØÖÆ                      *
+ *                  PIDæ§åˆ¶ä¾‹ç¨‹ - ç¼–ç ç”µæœºè½¬é€Ÿæ§åˆ¶                      *
  ************************************************************************
     #include "driverlib/MSP430F5xx_6xx/driverlib.h"
     #include "System/Sys_Clock.h"
@@ -60,9 +60,9 @@ float PID_Compute(PID *pid, float input);
         TA0_PWM_Init(TIMER_A_CLOCKSOURCE_SMCLK, TIMER_A_CLOCKSOURCE_DIVIDER_40, 624);
         Encoder_Init();
 
-        PID pid_struct;    // ¶¨ÒåPID²ÎÊı½á¹¹Ìå±äÁ¿
+        PID pid_struct;    // å®šä¹‰PIDå‚æ•°ç»“æ„ä½“å˜é‡
 
-        // ³õÊ¼»¯PID²ÎÊı
+        // åˆå§‹åŒ–PIDå‚æ•°
         float Kp = 0.24, Ki = 0.035, Kd = 0.3;
         float minIntegral = 0, maxIntegral = 100;
         float minOutput = 0, maxOutput = 100;
@@ -82,7 +82,7 @@ float PID_Compute(PID *pid, float input);
 
         while(1)
         {
-            // °´¼üĞŞ¸ÄÄ¿±êÖµ
+            // æŒ‰é”®ä¿®æ”¹ç›®æ ‡å€¼
             if(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1))
             {
                 target += 30;
@@ -96,18 +96,18 @@ float PID_Compute(PID *pid, float input);
             PID_ResetTarget(&pid_struct, target);
             OLED_ShowFloat(1, 57, target, 3, 2, 8);
 
-            // ¶ÁÈ¡µç»úµ±Ç°×ªËÙ
+            // è¯»å–ç”µæœºå½“å‰è½¬é€Ÿ
             realvalue = getRotatingSpeed(P20);
             OLED_ShowFloat(3, 65, realvalue, 3, 2, 8);
 
-            // ´®¿Ú´òÓ¡×ªËÙÊı¾İ£¬ÅäºÏvofa+¿ÉÊä³ö×ªËÙ±ä»¯ÇúÏß
+            // ä¸²å£æ‰“å°è½¬é€Ÿæ•°æ®ï¼Œé…åˆvofa+å¯è¾“å‡ºè½¬é€Ÿå˜åŒ–æ›²çº¿
             UART_printf(USCI_A1_BASE, "%.2f\n", realvalue);
 
-            // PIDÔËËãÊä³ö - PWM
+            // PIDè¿ç®—è¾“å‡º - PWM
             pid_output = PID_Compute(&pid_struct, realvalue);
             OLED_ShowFloat(5, 65, pid_output, 3, 2, 8);
 
-            // ¸ù¾İPIDÊä³ö¸üĞÂP1.2½ÅPWMÕ¼¿Õ±È
+            // æ ¹æ®PIDè¾“å‡ºæ›´æ–°P1.2è„šPWMå ç©ºæ¯”
             TA0_PWM_Duty(0, pid_output);
         }
     }

@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-void Init_I2C_GPIO(void);
 void I2C_init(uint8_t slaveAddress);
 void writeByte(uint8_t byte);
 void writeWord(uint16_t word);

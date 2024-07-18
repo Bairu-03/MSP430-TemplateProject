@@ -1,7 +1,7 @@
 /*
  * Encoder.c
  *
- *  Created on: 2024Äê7ÔÂ15ÈÕ
+ *  Created on: 2024å¹´7æœˆ15æ—¥
  *      Author: Bairu
  */
 
@@ -15,9 +15,9 @@ float P20RotatingSpeed = 0;
 float P22RotatingSpeed = 0;
 
 /**
- * @brief  ³õÊ¼»¯TA1ÎªÔö¼ÆÊıÄ£Ê½£¬Ã¿125ms´¥·¢Ò»´ÎÖĞ¶Ï£¬¼ÆËãÂö³åÆµÂÊ
- * @param  ÎŞ
- * @retval ÎŞ
+ * @brief  åˆå§‹åŒ–TA1ä¸ºå¢è®¡æ•°æ¨¡å¼ï¼Œæ¯125msè§¦å‘ä¸€æ¬¡ä¸­æ–­ï¼Œè®¡ç®—è„‰å†²é¢‘ç‡
+ * @param  æ— 
+ * @retval æ— 
  */
 void Encoder_TA1_Init(void)
 {
@@ -33,21 +33,21 @@ void Encoder_TA1_Init(void)
 }
 
 /**
- * @brief  ³õÊ¼»¯²¶»ñ±àÂëÆ÷Âö³åÊäÈëµÄIO¿Ú: P2.0, P2.2
- * @param  ÎŞ
- * @retval ÎŞ
+ * @brief  åˆå§‹åŒ–æ•è·ç¼–ç å™¨è„‰å†²è¾“å…¥çš„IOå£: P2.0, P2.2
+ * @param  æ— 
+ * @retval æ— 
  */
 void Encoder_IO_Init(void)
 {
     GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P2, GPIO_PIN0 | GPIO_PIN2);
-    GPIO_selectInterruptEdge(GPIO_PORT_P2, GPIO_PIN0 | GPIO_PIN2, GPIO_LOW_TO_HIGH_TRANSITION); //ÉÏÉıÑØ²¶»ñÖĞ¶Ï
+    GPIO_selectInterruptEdge(GPIO_PORT_P2, GPIO_PIN0 | GPIO_PIN2, GPIO_LOW_TO_HIGH_TRANSITION); //ä¸Šå‡æ²¿æ•è·ä¸­æ–­
     GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN0 | GPIO_PIN2);
 }
 
 /**
- * @brief  ³õÊ¼»¯±àÂëµç»ú×ªËÙ¶ÁÈ¡¹¦ÄÜ£¬IO¿Ú: P2.0, P2.2
- * @param  ÎŞ
- * @retval ÎŞ
+ * @brief  åˆå§‹åŒ–ç¼–ç ç”µæœºè½¬é€Ÿè¯»å–åŠŸèƒ½ï¼ŒIOå£: P2.0, P2.2
+ * @param  æ— 
+ * @retval æ— 
  */
 void Encoder_Init(void)
 {
@@ -56,12 +56,12 @@ void Encoder_Init(void)
 }
 
 /**
- * @brief  »ñÈ¡±àÂëÆ÷Âö³å
- * @param  PortX  ±àÂëÆ÷Âö³åÊäÈë¶Ë¿Ú
- *     @arg ÓĞĞ§È¡Öµ:
- *      - \b P20 : P2.0½Å
- *      - \b P22 : P2.2½Å
- * @retval 125msÄÚµÄÂö³åÊı
+ * @brief  è·å–ç¼–ç å™¨è„‰å†²
+ * @param  PortX  ç¼–ç å™¨è„‰å†²è¾“å…¥ç«¯å£
+ *     @arg æœ‰æ•ˆå–å€¼:
+ *      - \b P20 : P2.0è„š
+ *      - \b P22 : P2.2è„š
+ * @retval 125mså†…çš„è„‰å†²æ•°
  */
 float getRotatingSpeed(uint8_t PortX)
 {
@@ -74,7 +74,7 @@ float getRotatingSpeed(uint8_t PortX)
     }
 }
 
-// TA1ÖĞ¶Ï·şÎñº¯Êı£¬¼ÆËã×ªËÙ
+// TA1ä¸­æ–­æœåŠ¡å‡½æ•°ï¼Œè®¡ç®—è½¬é€Ÿ
 #pragma vector=TIMER1_A0_VECTOR
 __interrupt void TIMER1_A0_ISR (void)
 {
@@ -92,11 +92,11 @@ __interrupt void TIMER1_A0_ISR (void)
         P20CountEnd = P20_Count;
         P22CountEnd = P22_Count;
 
-        // // ×ªËÙ(rps)£¬Æ¥ÅäJGB37-520±àÂëµç»ú£¬¼õËÙ±È1:30£¬11Ïß
+        // // è½¬é€Ÿ(rps)ï¼ŒåŒ¹é…JGB37-520ç¼–ç ç”µæœºï¼Œå‡é€Ÿæ¯”1:30ï¼Œ11çº¿
         // P20RotatingSpeed = 8.0 * (float)(P20CountEnd - P20CountBegin) / 330.0;
         // P22RotatingSpeed = 8.0 * (float)(P22CountEnd - P22CountBegin) / 330.0;
 
-        // ±àÂëÆ÷¼ÆÊı/125ms
+        // ç¼–ç å™¨è®¡æ•°/125ms
         P20RotatingSpeed = P20CountEnd - P20CountBegin;
         P22RotatingSpeed = P22CountEnd - P22CountBegin;
 
@@ -106,9 +106,9 @@ __interrupt void TIMER1_A0_ISR (void)
     CaptureSwitch = !CaptureSwitch;
 }
 
-// P2.0£¬P2.2Íâ²¿ÖĞ¶Ï·şÎñº¯Êı£¬Ã¿´ÎÖĞ¶Ï¼ÆÊı+1
-// ×¢Òâ: ÏîÄ¿ÖĞÒıÈë±¾Ä£¿éºó£¬ÈôÒªÔÚÆäËûÎ»ÖÃÊ¹ÓÃPORT2ÖĞ¶Ï£¬
-//      ÔòĞèÒª½«´ËÖĞ¶Ïº¯Êı×¢ÊÍµô£¬²¢½«´Ë´¦µÄº¯ÊıÌå¸´ÖÆµ½ĞÂPORT2ÖĞ¶Ïº¯ÊıÄÚ£¬·ñÔò»áÒı·¢ÖØ¸´¶¨ÒåÎÊÌâ
+// P2.0ï¼ŒP2.2å¤–éƒ¨ä¸­æ–­æœåŠ¡å‡½æ•°ï¼Œæ¯æ¬¡ä¸­æ–­è®¡æ•°+1
+// æ³¨æ„: é¡¹ç›®ä¸­å¼•å…¥æœ¬æ¨¡å—åï¼Œè‹¥è¦åœ¨å…¶ä»–ä½ç½®ä½¿ç”¨PORT2ä¸­æ–­ï¼Œ
+//      åˆ™éœ€è¦å°†æ­¤ä¸­æ–­å‡½æ•°æ³¨é‡Šæ‰ï¼Œå¹¶å°†æ­¤å¤„çš„å‡½æ•°ä½“å¤åˆ¶åˆ°æ–°PORT2ä¸­æ–­å‡½æ•°å†…ï¼Œå¦åˆ™ä¼šå¼•å‘é‡å¤å®šä¹‰é—®é¢˜
 #pragma vector=PORT2_VECTOR
 __interrupt void Port2_interrupt(void)
 {

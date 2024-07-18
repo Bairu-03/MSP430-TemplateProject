@@ -1,7 +1,7 @@
 /*
  * MSP430F5529_UART.c
  *
- *  Created on: 2024Äê7ÔÂ16ÈÕ
+ *  Created on: 2024å¹´7æœˆ16æ—¥
  *      Author: Bairu
  */
 #include "driverlib.h"
@@ -11,36 +11,36 @@
 #include <stdio.h>
 
 /**
- * ½ÓÊÕ×´Ì¬±êÖ¾
- * bit15£¬½ÓÊÕÍê³É±êÖ¾£¨0x0a£©
- * bit14£¬½ÓÊÕµ½0x0d
- * bit13~bit0£¬½ÓÊÕµ½µÄÓĞĞ§×Ö½ÚÊı
+ * æ¥æ”¶çŠ¶æ€æ ‡å¿—
+ * bit15ï¼Œæ¥æ”¶å®Œæˆæ ‡å¿—ï¼ˆ0x0aï¼‰
+ * bit14ï¼Œæ¥æ”¶åˆ°0x0d
+ * bit13~bit0ï¼Œæ¥æ”¶åˆ°çš„æœ‰æ•ˆå­—èŠ‚æ•°
  */
 uint16_t UART0_RX_STA = 0;
 uint16_t UART1_RX_STA = 0;
 
 /**
- * ´®¿Ú0½ÓÊÕ»º³åÊı×é£¬×î´óUSART_REC_LEN¸ö×Ö½Ú£¬Ä©×Ö½ÚÎª»»ĞĞ·û
- * ÔÚÈ¡Íê´®¿ÚÊı¾İºó£¬ĞèÒªÓÃReset_Uart_RecStatus(USCI_A0_BASE)³õÊ¼»¯´®¿Ú½ÓÊÕ±êÖ¾
+ * ä¸²å£0æ¥æ”¶ç¼“å†²æ•°ç»„ï¼Œæœ€å¤§USART_REC_LENä¸ªå­—èŠ‚ï¼Œæœ«å­—èŠ‚ä¸ºæ¢è¡Œç¬¦
+ * åœ¨å–å®Œä¸²å£æ•°æ®åï¼Œéœ€è¦ç”¨Reset_Uart_RecStatus(USCI_A0_BASE)åˆå§‹åŒ–ä¸²å£æ¥æ”¶æ ‡å¿—
  */
 uint8_t UART0_RX_BUF[UART_REC_LEN];    // P3.3-TXD | P3.4-RXD
 
 /**
- * ´®¿Ú1½ÓÊÕ»º³åÊı×é£¬×î´óUSART_REC_LEN¸ö×Ö½Ú£¬Ä©×Ö½ÚÎª»»ĞĞ·û
- * ÔÚÈ¡Íê´®¿ÚÊı¾İºó£¬ĞèÒªÓÃReset_Uart_RecStatus(USCI_A1_BASE)³õÊ¼»¯´®¿Ú½ÓÊÕ±êÖ¾
+ * ä¸²å£1æ¥æ”¶ç¼“å†²æ•°ç»„ï¼Œæœ€å¤§USART_REC_LENä¸ªå­—èŠ‚ï¼Œæœ«å­—èŠ‚ä¸ºæ¢è¡Œç¬¦
+ * åœ¨å–å®Œä¸²å£æ•°æ®åï¼Œéœ€è¦ç”¨Reset_Uart_RecStatus(USCI_A1_BASE)åˆå§‹åŒ–ä¸²å£æ¥æ”¶æ ‡å¿—
  */
 uint8_t UART1_RX_BUF[UART_REC_LEN];    // P4.4-TXD | P4.5-RXD
 
 /**
- * @brief  ÓÃÀàËÆprintfµÄ·½Ê½´Ó´®¿ÚÊä³ö¸ñÊ½»¯×Ö·û´®¡£
- *      ×¢Òâ£ºÈôÒª´òÓ¡¸¡µãÊı£¬ÔòĞèµ½Project - Properties - CCS Build - P430 Compiler - Advanced Options - Language OptionsÖĞ
- *      ½«Level of printf/scanf support required (--printf _support)ÏîÉèÎªfull
- * @param  baseAddress ´®¿Ú»ùÖ·
- *      @arg ÓĞĞ§È¡Öµ:
+ * @brief  ç”¨ç±»ä¼¼printfçš„æ–¹å¼ä»ä¸²å£è¾“å‡ºæ ¼å¼åŒ–å­—ç¬¦ä¸²ã€‚
+ *      æ³¨æ„ï¼šè‹¥è¦æ‰“å°æµ®ç‚¹æ•°ï¼Œåˆ™éœ€åˆ°Project - Properties - CCS Build - P430 Compiler - Advanced Options - Language Optionsä¸­
+ *      å°†Level of printf/scanf support required (--printf _support)é¡¹è®¾ä¸ºfull
+ * @param  baseAddress ä¸²å£åŸºå€
+ *      @arg æœ‰æ•ˆå–å€¼:
  *          - \b USCI_A0_BASE -> P3.3-TXD | P3.4-RXD
  *          - \b USCI_A1_BASE -> P4.4-TXD | P4.5-RXD
- * @param  format ¸ñÊ½»¯×Ö·û´®
- * @retval ÎŞ
+ * @param  format æ ¼å¼åŒ–å­—ç¬¦ä¸²
+ * @retval æ— 
  */
 void UART_printf(uint16_t baseAddress, const char *format,...)
 {
@@ -58,15 +58,15 @@ void UART_printf(uint16_t baseAddress, const char *format,...)
 }
 
 /**
- * @brief  ³õÊ¼»¯´®¿Ú
- * @param  baseAddress ´®¿Ú»ùÖ·
- *      @arg ÓĞĞ§È¡Öµ:
+ * @brief  åˆå§‹åŒ–ä¸²å£
+ * @param  baseAddress ä¸²å£åŸºå€
+ *      @arg æœ‰æ•ˆå–å€¼:
  *          - \b USCI_A0_BASE -> P3.3-TXD | P3.4-RXD
  *          - \b USCI_A1_BASE -> P4.4-TXD | P4.5-RXD
- * @param  Baudrate ´®¿Ú²¨ÌØÂÊ
- * @retval ³õÊ¼»¯Ö´ĞĞ×´Ì¬¡£
- *      - \b STATUS_SUCCESS : ³õÊ¼»¯³É¹¦
- *      - \b STATUS_FAIL : ³õÊ¼»¯Ê§°Ü
+ * @param  Baudrate ä¸²å£æ³¢ç‰¹ç‡
+ * @retval åˆå§‹åŒ–æ‰§è¡ŒçŠ¶æ€ã€‚
+ *      - \b STATUS_SUCCESS : åˆå§‹åŒ–æˆåŠŸ
+ *      - \b STATUS_FAIL : åˆå§‹åŒ–å¤±è´¥
  */
 bool UART_Init(uint16_t baseAddress, uint32_t Baudrate)
 {
@@ -124,10 +124,10 @@ bool UART_Init(uint16_t baseAddress, uint32_t Baudrate)
         return STATUS_FAIL;
     }
 
-    // Ê¹ÄÜUARTÄ£¿é
+    // ä½¿èƒ½UARTæ¨¡å—
     USCI_A_UART_enable(baseAddress);
 
-    // ¿ªÆô´®¿Ú½ÓÊÕÖĞ¶Ï
+    // å¼€å¯ä¸²å£æ¥æ”¶ä¸­æ–­
     USCI_A_UART_clearInterrupt(baseAddress, USCI_A_UART_RECEIVE_INTERRUPT);
     USCI_A_UART_enableInterrupt(baseAddress, USCI_A_UART_RECEIVE_INTERRUPT);
 
@@ -135,14 +135,14 @@ bool UART_Init(uint16_t baseAddress, uint32_t Baudrate)
 }
 
 /**
- * @brief  ÅĞ¶Ï´®¿Ú½ÓÊÕÊÇ·ñÍê³É£¨½ÓÊÕµ½0x0D 0x0A£©
- * @param  baseAddress ´®¿Ú»ùÖ·
- *      @arg ÓĞĞ§È¡Öµ:
+ * @brief  åˆ¤æ–­ä¸²å£æ¥æ”¶æ˜¯å¦å®Œæˆï¼ˆæ¥æ”¶åˆ°0x0D 0x0Aï¼‰
+ * @param  baseAddress ä¸²å£åŸºå€
+ *      @arg æœ‰æ•ˆå–å€¼:
  *          - \b USCI_A0_BASE -> P3.3-TXD | P3.4-RXD
  *          - \b USCI_A1_BASE -> P4.4-TXD | P4.5-RXD
  * @retval
- *      - \b 1 : ½ÓÊÕÍê³É
- *      - \b 0 : ½ÓÊÕÎ´Íê³É
+ *      - \b 1 : æ¥æ”¶å®Œæˆ
+ *      - \b 0 : æ¥æ”¶æœªå®Œæˆ
  */
 uint8_t get_Uart_RecStatus(uint16_t baseAddress)
 {
@@ -158,17 +158,17 @@ uint8_t get_Uart_RecStatus(uint16_t baseAddress)
         UART_RX_STA = UART1_RX_STA;
     }
 
-    // ÈôUART_RX_STA×î¸ßÎ»Îª1£¬½ÓÊÕÍê³É
+    // è‹¥UART_RX_STAæœ€é«˜ä½ä¸º1ï¼Œæ¥æ”¶å®Œæˆ
     return (UART_RX_STA & 0x8000) ? 1 : 0;
 }
 
 /**
- * @brief  »ñÈ¡´®¿Ú½ÓÊÕÊı×éUART_RX_BUFµÄ³¤¶È
- * @param  baseAddress ´®¿Ú»ùÖ·
- *      @arg ÓĞĞ§È¡Öµ:
+ * @brief  è·å–ä¸²å£æ¥æ”¶æ•°ç»„UART_RX_BUFçš„é•¿åº¦
+ * @param  baseAddress ä¸²å£åŸºå€
+ *      @arg æœ‰æ•ˆå–å€¼:
  *          - \b USCI_A0_BASE -> P3.3-TXD | P3.4-RXD
  *          - \b USCI_A1_BASE -> P4.4-TXD | P4.5-RXD
- * @retval Êı×é³¤¶ÈÖµ(uint16_t)
+ * @retval æ•°ç»„é•¿åº¦å€¼(uint16_t)
  */
 uint16_t get_Uart_RecLength(uint16_t baseAddress)
 {
@@ -185,12 +185,12 @@ uint16_t get_Uart_RecLength(uint16_t baseAddress)
 }
 
 /**
- * @brief  ÖØÖÃ´®¿Ú½ÓÊÕ×´Ì¬±êÖ¾£¬×¼±¸ÏÂ´Î½ÓÊÕ
- * @param  baseAddress ´®¿Ú»ùÖ·
- *      @arg ÓĞĞ§È¡Öµ:
+ * @brief  é‡ç½®ä¸²å£æ¥æ”¶çŠ¶æ€æ ‡å¿—ï¼Œå‡†å¤‡ä¸‹æ¬¡æ¥æ”¶
+ * @param  baseAddress ä¸²å£åŸºå€
+ *      @arg æœ‰æ•ˆå–å€¼:
  *          - \b USCI_A0_BASE -> P3.3-TXD | P3.4-RXD
  *          - \b USCI_A1_BASE -> P4.4-TXD | P4.5-RXD
- * @retval ÎŞ
+ * @retval æ— 
  */
 void Reset_Uart_RecStatus(uint16_t baseAddress)
 {
@@ -206,13 +206,13 @@ void Reset_Uart_RecStatus(uint16_t baseAddress)
 }
 
 /**
- * @brief  ´®¿Ú·¢ËÍÊı¾İ
- * @param  baseAddress ´®¿Ú»ùÖ·
- *      @arg ÓĞĞ§È¡Öµ:
+ * @brief  ä¸²å£å‘é€æ•°æ®
+ * @param  baseAddress ä¸²å£åŸºå€
+ *      @arg æœ‰æ•ˆå–å€¼:
  *          - \b USCI_A0_BASE -> P3.3-TXD | P3.4-RXD
  *          - \b USCI_A1_BASE -> P4.4-TXD | P4.5-RXD
- * @param  transmitData Òª·¢ËÍµÄÊı¾İ
- * @retval ÎŞ
+ * @param  transmitData è¦å‘é€çš„æ•°æ®
+ * @retval æ— 
  */
 void UART_SendData(uint16_t baseAddress, uint8_t transmitData)
 {
@@ -220,7 +220,7 @@ void UART_SendData(uint16_t baseAddress, uint8_t transmitData)
 }
 
 /*****************************
- * USCI_A0ÖĞ¶ÏÏòÁ¿·şÎñ³ÌĞò
+ * USCI_A0ä¸­æ–­å‘é‡æœåŠ¡ç¨‹åº
  ****************************/
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR (void)
@@ -229,19 +229,19 @@ __interrupt void USCI_A0_ISR (void)
     switch (__even_in_range(UCA0IV,4))
     {
         // Vector 2 - RXIFG
-        // ´®¿Ú½ÓÊÕÖĞ¶Ï(½ÓÊÕµ½µÄÊı¾İ±ØĞëÊÇ0x0D 0x0A½áÎ²)
+        // ä¸²å£æ¥æ”¶ä¸­æ–­(æ¥æ”¶åˆ°çš„æ•°æ®å¿…é¡»æ˜¯0x0D 0x0Aç»“å°¾)
         case 2:
             receivedData = USCI_A_UART_receiveData(USCI_A0_BASE);
-            if ((UART0_RX_STA & 0x8000) == 0) // ½ÓÊÕÎ´Íê³É
+            if ((UART0_RX_STA & 0x8000) == 0) // æ¥æ”¶æœªå®Œæˆ
             {
-                if (UART0_RX_STA & 0x4000) // ½ÓÊÕµ½ÁË0x0D
+                if (UART0_RX_STA & 0x4000) // æ¥æ”¶åˆ°äº†0x0D
                 {
                     if (receivedData != 0x0A)
-                        UART0_RX_STA = 0; // ½ÓÊÕ´íÎó,ÖØĞÂ¿ªÊ¼
+                        UART0_RX_STA = 0; // æ¥æ”¶é”™è¯¯,é‡æ–°å¼€å§‹
                     else
-                        UART0_RX_STA |= 0x8000; // ½ÓÊÕÍê³É
+                        UART0_RX_STA |= 0x8000; // æ¥æ”¶å®Œæˆ
                 }
-                else // »¹Ã»ÊÕµ½0x0D
+                else // è¿˜æ²¡æ”¶åˆ°0x0D
                 {
                     if (receivedData == 0x0D)
                         UART0_RX_STA |= 0x4000;
@@ -250,7 +250,7 @@ __interrupt void USCI_A0_ISR (void)
                         UART0_RX_BUF[UART0_RX_STA & 0x3FFF] = receivedData;
                         UART0_RX_STA++;
                         if (UART0_RX_STA > (UART_REC_LEN - 1))
-                            UART0_RX_STA = 0; // ½ÓÊÕÊı¾İ´íÎó,ÖØĞÂ¿ªÊ¼½ÓÊÕ
+                            UART0_RX_STA = 0; // æ¥æ”¶æ•°æ®é”™è¯¯,é‡æ–°å¼€å§‹æ¥æ”¶
                     }
                 }
             }
@@ -261,7 +261,7 @@ __interrupt void USCI_A0_ISR (void)
 }
 
 /*****************************
- * USCI_A1ÖĞ¶ÏÏòÁ¿·şÎñ³ÌĞò
+ * USCI_A1ä¸­æ–­å‘é‡æœåŠ¡ç¨‹åº
  ****************************/
 #pragma vector=USCI_A1_VECTOR
 __interrupt void USCI_A1_ISR (void)
@@ -272,16 +272,16 @@ __interrupt void USCI_A1_ISR (void)
         //Vector 2 - RXIFG
         case 2:
             receivedData = USCI_A_UART_receiveData(USCI_A1_BASE);
-            if ((UART1_RX_STA & 0x8000) == 0) // ½ÓÊÕÎ´Íê³É
+            if ((UART1_RX_STA & 0x8000) == 0) // æ¥æ”¶æœªå®Œæˆ
             {
-                if (UART1_RX_STA & 0x4000) // ½ÓÊÕµ½ÁË0x0D
+                if (UART1_RX_STA & 0x4000) // æ¥æ”¶åˆ°äº†0x0D
                 {
                     if (receivedData != 0x0A)
-                        UART1_RX_STA = 0; // ½ÓÊÕ´íÎó,ÖØĞÂ¿ªÊ¼
+                        UART1_RX_STA = 0; // æ¥æ”¶é”™è¯¯,é‡æ–°å¼€å§‹
                     else
-                        UART1_RX_STA |= 0x8000; // ½ÓÊÕÍê³É
+                        UART1_RX_STA |= 0x8000; // æ¥æ”¶å®Œæˆ
                 }
-                else // »¹Ã»ÊÕµ½0x0D
+                else // è¿˜æ²¡æ”¶åˆ°0x0D
                 {
                     if (receivedData == 0x0D)
                         UART1_RX_STA |= 0x4000;
@@ -290,7 +290,7 @@ __interrupt void USCI_A1_ISR (void)
                         UART1_RX_BUF[UART1_RX_STA & 0x3FFF] = receivedData;
                         UART1_RX_STA++;
                         if (UART1_RX_STA > (UART_REC_LEN - 1))
-                            UART1_RX_STA = 0; // ½ÓÊÕÊı¾İ´íÎó,ÖØĞÂ¿ªÊ¼½ÓÊÕ
+                            UART1_RX_STA = 0; // æ¥æ”¶æ•°æ®é”™è¯¯,é‡æ–°å¼€å§‹æ¥æ”¶
                     }
                 }
             }

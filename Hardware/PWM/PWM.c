@@ -1,7 +1,7 @@
 /*
  * PWM.c
  *
- *  Created on: 2024Äê7ÔÂ15ÈÕ
+ *  Created on: 2024å¹´7æœˆ15æ—¥
  *      Author: Bairu
  */
 
@@ -11,15 +11,15 @@
 uint16_t TA0_arr;
 
 /**
- * @brief  TA0¶¨Ê±Æ÷PWM³õÊ¼»¯£¬PWMÆµÂÊ = Ê±ÖÓÔ´ÆµÂÊ / ·ÖÆµÏµÊı / (arr+1)
- * @param  clockSource Ê±ÖÓÔ´¡£
- *     @arg ÓĞĞ§È¡Öµ:
+ * @brief  TA0å®šæ—¶å™¨PWMåˆå§‹åŒ–ï¼ŒPWMé¢‘ç‡ = æ—¶é’Ÿæºé¢‘ç‡ / åˆ†é¢‘ç³»æ•° / (arr+1)
+ * @param  clockSource æ—¶é’Ÿæºã€‚
+ *     @arg æœ‰æ•ˆå–å€¼:
  *      - \b TIMER_A_CLOCKSOURCE_EXTERNAL_TXCLK
  *      - \b TIMER_A_CLOCKSOURCE_ACLK
  *      - \b TIMER_A_CLOCKSOURCE_SMCLK
  *      - \b TIMER_A_CLOCKSOURCE_INVERTED_EXTERNAL_TXCLK
- * @param  psc Ê±ÖÓ·ÖÆµÏµÊı¡£
- *     @arg ÓĞĞ§È¡Öµ:
+ * @param  psc æ—¶é’Ÿåˆ†é¢‘ç³»æ•°ã€‚
+ *     @arg æœ‰æ•ˆå–å€¼:
  *      - \b TIMER_A_CLOCKSOURCE_DIVIDER_1
  *      - \b TIMER_A_CLOCKSOURCE_DIVIDER_2
  *      - \b TIMER_A_CLOCKSOURCE_DIVIDER_3
@@ -40,15 +40,15 @@ uint16_t TA0_arr;
  *      - \b TIMER_A_CLOCKSOURCE_DIVIDER_48
  *      - \b TIMER_A_CLOCKSOURCE_DIVIDER_56
  *      - \b TIMER_A_CLOCKSOURCE_DIVIDER_64
- * @param  arr Ä¿±ê×Ô¶¯×°ÔØÖµ - 1¡£
- *     @arg È¡Öµ: 0 - 65535
- * @retval ÎŞ
+ * @param  arr ç›®æ ‡è‡ªåŠ¨è£…è½½å€¼ - 1ã€‚
+ *     @arg å–å€¼: 0 - 65535
+ * @retval æ— 
  */
 void TA0_PWM_Init(uint16_t clockSource, uint16_t psc, uint16_t arr)
 {
     TA0_arr = arr;
 
-    //¸´ÓÃÊä³ö£ºP1.2/TA0.1  P1.3/TA0.2  P1.4/TA0.3  P1.5/TA0.4
+    //å¤ç”¨è¾“å‡ºï¼šP1.2/TA0.1  P1.3/TA0.2  P1.4/TA0.3  P1.5/TA0.4
     GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1, GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN4 + GPIO_PIN5);
 
     Timer_A_initUpModeParam TAup = {0};
@@ -87,15 +87,15 @@ void TA0_PWM_Init(uint16_t clockSource, uint16_t psc, uint16_t arr)
 }
 
 /**
- * @brief  ¿ØÖÆTA0¸÷Í¨µÀPWMÕ¼¿Õ±È
- * @param  CHx Ñ¡ÔñPWMÊä³öÍ¨µÀ¡£
- *     @arg È¡Öµ:
+ * @brief  æ§åˆ¶TA0å„é€šé“PWMå ç©ºæ¯”
+ * @param  CHx é€‰æ‹©PWMè¾“å‡ºé€šé“ã€‚
+ *     @arg å–å€¼:
  *      - \b 0 : P1.2
  *      - \b 1 : P1.3
  *      - \b 2 : P1.4
  *      - \b 3 : P1.5
- * @param  Duty PWMÕ¼¿Õ±È¡£
- *     @arg È¡Öµ: 0 - 100.0
+ * @param  Duty PWMå ç©ºæ¯”ã€‚
+ *     @arg å–å€¼: 0 - 100.0
  * @retval
  */
 void TA0_PWM_Duty(uint8_t CHx, float Duty)

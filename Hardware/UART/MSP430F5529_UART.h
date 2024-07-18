@@ -1,14 +1,14 @@
 /*
  * MSP430F5529_UART.h
  *
- *  Created on: 2024Äê7ÔÂ16ÈÕ
+ *  Created on: 2024å¹´7æœˆ16æ—¥
  *      Author: Bairu
  */
 
 #ifndef MSP430F5529_UART_H_
 #define MSP430F5529_UART_H_
 
-#define UART_REC_LEN 200 // ¶¨Òå×î´ó½ÓÊÕ×Ö½ÚÊı 200
+#define UART_REC_LEN 200 // å®šä¹‰æœ€å¤§æ¥æ”¶å­—èŠ‚æ•° 200
 
 extern uint8_t UART0_RX_BUF[UART_REC_LEN];    // P3.3-TXD | P3.4-RXD
 extern uint8_t UART1_RX_BUF[UART_REC_LEN];    // P4.4-TXD | P4.5-RXD
@@ -24,7 +24,7 @@ void UART_SendData(uint16_t baseAddress, uint8_t transmitData);
 #endif /* MSP430F5529_UART_H_ */
 
 /************************************************************************
- *                            ´®¿ÚÍ¨ĞÅÀı³Ì                              *
+ *                            ä¸²å£é€šä¿¡ä¾‹ç¨‹                              *
  ************************************************************************
     #include "driverlib/MSP430F5xx_6xx/driverlib.h"
     #include "System/Sys_Clock.h"
@@ -36,47 +36,47 @@ void UART_SendData(uint16_t baseAddress, uint8_t transmitData);
         WDT_A_hold(WDT_A_BASE);
         SystemClock_Init();
 
-        __bis_SR_register(GIE);             // Ê¹ÄÜ×ÜÖĞ¶Ï
+        __bis_SR_register(GIE);             // ä½¿èƒ½æ€»ä¸­æ–­
 
-        OLED_Init();                        // OLED³õÊ¼»¯
+        OLED_Init();                        // OLEDåˆå§‹åŒ–
 
-        UART_Init(USCI_A0_BASE, 115200);    // ´®¿Ú0³õÊ¼»¯
-        UART_Init(USCI_A1_BASE, 115200);    // ´®¿Ú1³õÊ¼»¯
+        UART_Init(USCI_A0_BASE, 115200);    // ä¸²å£0åˆå§‹åŒ–
+        UART_Init(USCI_A1_BASE, 115200);    // ä¸²å£1åˆå§‹åŒ–
 
         OLED_ShowString(1, 1, "UART0:", 8);
         OLED_ShowString(5, 1, "UART1:", 8);
 
         while(1)
         {
-            // Èô´®¿Ú0½ÓÊÕÍê³É
+            // è‹¥ä¸²å£0æ¥æ”¶å®Œæˆ
             if(get_Uart_RecStatus(USCI_A0_BASE))
             {
                 OLED_ShowString(3, 1, "                ", 8);
                 uint8_t i;
-                // »ñÈ¡UART0_RX_BUFµÄ³¤¶È£¬±éÀú
+                // è·å–UART0_RX_BUFçš„é•¿åº¦ï¼Œéå†
                 for(i = 0; i < get_Uart_RecLength(USCI_A0_BASE); i++)
                 {
-                    // ¶ÁÈ¡UART0_RX_BUFÖĞµÄÄÚÈİ£¬´®¿Ú»Ø´«£¬OLEDÏÔÊ¾
+                    // è¯»å–UART0_RX_BUFä¸­çš„å†…å®¹ï¼Œä¸²å£å›ä¼ ï¼ŒOLEDæ˜¾ç¤º
                     UART_SendData(USCI_A0_BASE, UART0_RX_BUF[i]);
                     OLED_ShowChar(3, (8 * i + 1), UART0_RX_BUF[i], 8);
                 }
-                // ÖØÖÃ´®¿Ú½ÓÊÕ×´Ì¬±êÖ¾£¬×¼±¸ÏÂ´Î½ÓÊÕ
+                // é‡ç½®ä¸²å£æ¥æ”¶çŠ¶æ€æ ‡å¿—ï¼Œå‡†å¤‡ä¸‹æ¬¡æ¥æ”¶
                 Reset_Uart_RecStatus(USCI_A0_BASE);
             }
 
-            // Èô´®¿Ú1½ÓÊÕÍê³É
+            // è‹¥ä¸²å£1æ¥æ”¶å®Œæˆ
             if(get_Uart_RecStatus(USCI_A1_BASE))
             {
                 OLED_ShowString(7, 1, "                ", 8);
                 uint8_t i;
-                // »ñÈ¡UART1_RX_BUFµÄ³¤¶È£¬±éÀú
+                // è·å–UART1_RX_BUFçš„é•¿åº¦ï¼Œéå†
                 for(i = 0; i < get_Uart_RecLength(USCI_A1_BASE); i++)
                 {
-                    // ¶ÁÈ¡UART1_RX_BUFÖĞµÄÄÚÈİ£¬´®¿Ú»Ø´«£¬OLEDÏÔÊ¾
+                    // è¯»å–UART1_RX_BUFä¸­çš„å†…å®¹ï¼Œä¸²å£å›ä¼ ï¼ŒOLEDæ˜¾ç¤º
                     UART_SendData(USCI_A1_BASE, UART1_RX_BUF[i]);
                     OLED_ShowChar(7, (8 * i + 1), UART1_RX_BUF[i], 8);
                 }
-                // ÖØÖÃ´®¿Ú½ÓÊÕ×´Ì¬±êÖ¾£¬×¼±¸ÏÂ´Î½ÓÊÕ
+                // é‡ç½®ä¸²å£æ¥æ”¶çŠ¶æ€æ ‡å¿—ï¼Œå‡†å¤‡ä¸‹æ¬¡æ¥æ”¶
                 Reset_Uart_RecStatus(USCI_A1_BASE);
             }
         }
