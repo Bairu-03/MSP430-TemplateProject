@@ -5,7 +5,14 @@
             "name": "HardwareDriver",
             "type": "ccs-debug",
             "request": "launch",
-            "project": "HardwareDriver"
+            "project": "HardwareDriver",
+            "debuggerSettings": {
+                "targetConfigs/MSP430F5529.ccxml": {
+                    "TI MSP430 USB1/MSP430": {
+                        "data": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<PropertyValues/>\n"
+                    }
+                }
+            }
         }
     ]
 }

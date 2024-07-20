@@ -50,7 +50,6 @@ void I2C_init(uint8_t slaveAddress)
     return;
 }
 
-
 /* 向特定寄存器写入一个字节，不能在中断上下文中调用 */
 void writeByte(uint8_t byte)
 {

@@ -5,33 +5,76 @@
  *      Author: Bairu
  */
 
-#include "../I2C/MSP430F5529_I2C.h"
+#include "../I2C_Hardware/MSP430F5529_I2C.h"
 #include "OLED.h"
 #include "OLED_Font.h"
 
-uint16_t TxData = 0;
 
+/*************************************硬件I2C****************************************/
+/***********************"../I2C_Hardware/MSP430F5529_I2C.h"**************************/
 /**
- * @brief  向OLED屏发送命令。
+ * @brief  向OLED屏发送命令（硬件I2C）。
  * @param  I2C_Command 要写入的命令。
  * @retval 无
  */
 void OLED_WriteCommand(uint8_t I2C_Command)
 {
+    uint16_t TxData = 0;
     TxData = (OLED_WriteCom_Addr << 8) | I2C_Command;
     writeWord(TxData);
 }
 
 /**
- * @brief  向OLED屏发送数据。
+ * @brief  向OLED屏发送数据（硬件I2C）。
  * @param  IIC_Data 要写入的数据。
  * @retval 无
  */
 void OLED_WriteData(uint8_t IIC_Data)
 {
+    uint16_t TxData = 0;
     TxData = (OLED_WriteData_Addr << 8) | IIC_Data;
     writeWord(TxData);
 }
+/************************************************************************************/
+
+
+/*********************************软件（模拟I2C）*************************************/
+/**************************"../I2C_Software/I2C_Sim.h"*******************************/
+// // 定义软件I2C引脚
+// #define OLED_SCL_port GPIO_PORT_P2
+// #define OLED_SCL_pin  GPIO_PIN4
+// #define OLED_SDA_port GPIO_PORT_P1
+// #define OLED_SDA_pin  GPIO_PIN5
+
+// /**
+//  * @brief  向OLED屏发送命令（软件I2C）。
+//  * @param  I2C_Command 要写入的命令。
+//  * @retval 无
+//  */
+// void OLED_WriteCommand(uint8_t I2C_Command)
+// {
+//     I2C_Start(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin);
+//     I2C_SendByte(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin, 0x78);
+//     I2C_SendByte(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin, 0x00);
+//     I2C_SendByte(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin, I2C_Command);
+//     I2C_Stop(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin);
+// }
+
+// /**
+//  * @brief  向OLED屏发送数据（软件I2C）。
+//  * @param  IIC_Data 要写入的数据。
+//  * @retval 无
+//  */
+// void OLED_WriteData(uint8_t IIC_Data)
+// {
+//     I2C_Start(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin);
+//     I2C_SendByte(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin, 0x78);
+//     I2C_SendByte(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin, 0x40);
+//     I2C_SendByte(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin, IIC_Data);
+//     I2C_Stop(OLED_SCL_port, OLED_SCL_pin, OLED_SDA_port, OLED_SDA_pin);
+// }
+/*************************************************************************************/
+
 
 /**
  * @brief  设置屏幕显示起始坐标。
@@ -446,7 +489,7 @@ void OLED_Init(void)
             ;
     }
 
-    I2C_init(OLED_ADDRESS);
+    I2C_init(OLED_ADDRESS); // 硬件I2C初始化（使用软件I2C时删除此函数）
 
     OLED_WriteCommand(0xAE); // 关闭显示
 

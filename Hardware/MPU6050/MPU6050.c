@@ -5,177 +5,46 @@
  *      Author: S10
  */
 #include "driverlib.h"
-#include "mpu6050.h"
+#include "MPU6050.h"
+#include "../I2C_Software/I2C_Sim.h"
 
-void ByteWrite6050(unsigned char REG_Address,unsigned char REG_data);
-unsigned char ByteRead6050(unsigned char REG_Address);
-int Get6050Data(unsigned char REG_Address);
-void InitMPU6050();
-float Mpu6050AccelAngle(char dir);
-float Mpu6050GyroAngle(char dir);
+#define  MPU_SCL_port  GPIO_PORT_P8
+#define  MPU_SCL_pin   GPIO_PIN1
+#define  MPU_SDA_port  GPIO_PORT_P2
+#define  MPU_SDA_pin   GPIO_PIN3
 
-//开启信号
-void IIC_start()
+/**
+ * @brief  向MPU6050发送数据。
+ * @param  REG_Address 内部寄存器地址。
+ * @param  REG_data 待发送的字节。
+ * @retval 无
+ */
+void MPU6050_WriteData(uint8_t REG_Address,uint8_t REG_data)
 {
-    SDA_OUT;
-    SCL_OUT;
-    SCL_HIGH;
-    SDA_HIGH;
-    __delay_cycles(16);
-    SDA_LOW;
-    __delay_cycles(16);
-    SCL_LOW;
-}
-//停止信号
-void IIC_stop()
-{
-    SDA_OUT;
-    SCL_OUT;
-    SDA_LOW;
-    SCL_HIGH;
-    __delay_cycles(16);
-    SDA_HIGH;
-    __delay_cycles(16);
+    I2C_Start(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin);                  //起始信号
+    I2C_SendByte(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin, SlaveAddress);   //发送设备地址+写信号
+    I2C_SendByte(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin, REG_Address);    //内部寄存器地址
+    I2C_SendByte(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin, REG_data);       //向内部寄存器发送数据
+    I2C_Stop(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin);                   //发送停止信号
 }
 
-
-//发送应答信号(MCU=>||)
-void SendACK(unsigned char ack)
+/**
+ * @brief  读取MPU6050寄存器数据。
+ * @param  REG_Address 内部寄存器地址。
+ * @retval 读取到的字节数据。
+ */
+uint8_t MPU6050_ReadData(uint8_t REG_Address)
 {
-    SDA_OUT;
-    SCL_OUT;
-    if(ack==1)
-    {
-        SDA_HIGH;
-    }
-    else if(ack==0)
-    {
-        SDA_LOW;
-    }
-    else
-        return;
-    SCL_HIGH;
-    __delay_cycles(16);
-    SCL_LOW;
-    __delay_cycles(16);
-}
-
-//接收应答信号（||=>MCU）
-unsigned char IIC_testACK()
-{
-    unsigned char a;
-    SCL_OUT;
-    SDA_IN;
-//GPIO_setAsInputPinWithPullUpResistor (GPIO_PORT_P8, GPIO_PIN2);
-    SCL_HIGH;
-    __delay_cycles(16);
-    if(GPIO_getInputPinValue (GPIO_PORT_P8, GPIO_PIN2)==1)
-    {
-        a=1;
-    }
-    else
-    {
-        a=0;
-    }
-
-    SCL_LOW;
-    __delay_cycles(16);
-    SDA_OUT;
-    return a;
-}
-
-//向IIC总线发送数据（MCU=>||）
-void IIC_writebyte(unsigned char IIC_byte)
-{
-    unsigned char i;
-    SDA_OUT;
-    SCL_OUT;
-//    SCL_LOW;
-        for (i=0; i<8; i++)         //8位计数器
-            {
-                if((IIC_byte<<i)&0x80)
-                {
-                    SDA_HIGH;
-                }
-                else
-                {
-                    SDA_LOW;
-                }
-
-        __delay_cycles(16);
-        SCL_HIGH;
-        __delay_cycles(16);
-        SCL_LOW;
-//        __delay_cycles(16);
-//        IIC_byte<<=1;
-    }
-
-    IIC_testACK();
-}
-
-
-//IIC接收一个字节(||——>MCU)
-unsigned char IIC_readebyte(void)
-{
-    unsigned char i,k=0;
-    SDA_IN;
-    GPIO_setAsInputPinWithPullUpResistor (GPIO_PORT_P8, GPIO_PIN2);
-    SCL_OUT;
-    SCL_LOW;
-    __delay_cycles(160);
-    for(i=0;i<8;i++)
-    {
-        SCL_HIGH;
-        k=k<<1;
-        if(SDA)
-            k|=1;
-        SCL_LOW;
-        __delay_cycles(160);
-    }
-    SDA_OUT;
-    __delay_cycles(160);
-    return k;
-}
-
-
-//**************************************
-//向I2C设备写入一个字节数据
-//**************************************
-void ByteWrite6050(unsigned char REG_Address,unsigned char REG_data)
-{
-    IIC_start();                  //起始信号
-    IIC_writebyte(SlaveAddress);   //发送设备地址+写信号
-    IIC_writebyte(REG_Address);    //内部寄存器地址，
-    IIC_writebyte(REG_data);        //内部寄存器数据，
-    IIC_stop();                   //发送停止信号
-}
-
-//**************************************
-//从I2C设备读取一个字节数据
-//**************************************
-unsigned char ByteRead6050(unsigned char REG_Address)
-{
-    unsigned char REG_data;
-    IIC_start();                   //起始信号
-    IIC_writebyte(SlaveAddress);     //发送设备地址+写信号
-    IIC_writebyte(REG_Address);      //发送存储单元地址，从0开始
-    IIC_start();                   //起始信号
-    IIC_writebyte(SlaveAddress+1);  //发送设备地址+读信号
-    REG_data=IIC_readebyte();       //读出寄存器数据
-    SendACK(1);                //接收应答信号
-    IIC_stop();                    //停止信号
+    uint8_t REG_data;
+    I2C_Start(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin);                   //起始信号
+    I2C_SendByte(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin, SlaveAddress);    //发送设备地址+写信号
+    I2C_SendByte(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin, REG_Address);     //发送存储单元地址，从0开始
+    I2C_Start(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin);                   //起始信号
+    I2C_SendByte(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin, SlaveAddress+1);  //发送设备地址+读信号
+    REG_data=I2C_ReadByte(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin);       //读出寄存器数据
+    I2C_SendACK(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin, 1);                //接收应答信号
+    I2C_Stop(MPU_SCL_port, MPU_SCL_pin, MPU_SDA_port, MPU_SDA_pin);                    //停止信号
     return REG_data;
-}
-
-//**************************************
-//合成数据
-//**************************************
-int Get6050Data(unsigned char REG_Address)
-{
-    char H,L;
-    H=ByteRead6050(REG_Address);
-    L=ByteRead6050(REG_Address+1);
-    return (H<<8)+L;   //合成数据
 }
 
 /**
@@ -184,13 +53,26 @@ int Get6050Data(unsigned char REG_Address)
  * @param  无
  * @retval 无
  */
-void InitMPU6050()
+void InitMPU6050(void)
 {
-    ByteWrite6050(PWR_MGMT_1, 0x00);  // 解除休眠状态
-    ByteWrite6050(SMPLRT_DIV, 0x07);  // 陀螺仪采样率设置（125HZ）
-    ByteWrite6050(CONFIG, 0x06);      // 低通滤波器设置（5HZ频率）
-    ByteWrite6050(GYRO_CONFIG, 0x18); // 陀螺仪自检及检测范围设置(不自检,16.4LSB/DBS/S)
-    ByteWrite6050(ACCEL_CONFIG, 0x01); // 不自检，量程2g
+    MPU6050_WriteData(PWR_MGMT_1, 0x00);  // 解除休眠状态
+    MPU6050_WriteData(SMPLRT_DIV, 0x07);  // 陀螺仪采样率设置（125HZ）
+    MPU6050_WriteData(CONFIG, 0x06);      // 低通滤波器设置（5HZ频率）
+    MPU6050_WriteData(GYRO_CONFIG, 0x18); // 陀螺仪自检及检测范围设置(不自检,16.4LSB/DBS/S)
+    MPU6050_WriteData(ACCEL_CONFIG, 0x01); // 不自检，量程2g
+}
+
+/*
+ *************************************
+ **合成数据
+ *************************************
+ */
+int16_t Get6050Data(uint8_t REG_Address)
+{
+    char H, L;
+    H = MPU6050_ReadData(REG_Address);
+    L = MPU6050_ReadData(REG_Address + 1);
+    return (H << 8) + L; // 合成数据
 }
 
 /*
