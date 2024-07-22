@@ -57,7 +57,7 @@ void InitMPU6050(void)
 {
     MPU6050_WriteData(PWR_MGMT_1, 0x00);  // 解除休眠状态
     MPU6050_WriteData(SMPLRT_DIV, 0x07);  // 陀螺仪采样率设置（125HZ）
-    MPU6050_WriteData(CONFIG, 0x06);      // 低通滤波器设置（5HZ频率）
+    MPU6050_WriteData(MPU6050_CONFIG, 0x06);      // 低通滤波器设置（5HZ频率）
     MPU6050_WriteData(GYRO_CONFIG, 0x18); // 陀螺仪自检及检测范围设置(不自检,16.4LSB/DBS/S)
     MPU6050_WriteData(ACCEL_CONFIG, 0x01); // 不自检，量程2g
 }

@@ -1,8 +1,7 @@
 #include "driverlib/MSP430F5xx_6xx/driverlib.h"
 #include "System/Sys_Clock.h"
 #include "Hardware/OLED/OLED.h"
-#include "Hardware/UART/MSP430F5529_UART.h"
-#include "Hardware/MPU6050/MPU6050.h"
+#include "Hardware/nRF24L01/nRF24L01.h"
 
 void main(void)
 {
@@ -13,27 +12,61 @@ void main(void)
 
     OLED_Init();
 
-    UART_Init(USCI_A1_BASE, 115200);
+    OLED_ShowString(7, 1, "nRF24L01 Init...", 8);
+    NRF24L01_Init();
+    OLED_Clear();
 
-    InitMPU6050();
+    /****接收端****/
+    // uint8_t Buf[32] = {0};
+    /**************/
+
+    /****发送端****/
+    uint8_t Buf[32] = {5, 0x12, 0x22, 0x32, 0x42, 0x52};
+    NRF24L01_SendBuf(Buf);
+
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN1);
+    /**************/
 
     while(1)
     {
-        OLED_ShowFloat(1, 1, Mpu6050AccelAngle(ACCEL_XOUT), 2, 2, 8);
-        OLED_ShowFloat(3, 1, Mpu6050AccelAngle(ACCEL_YOUT), 2, 2, 8);
-        OLED_ShowFloat(5, 1, Mpu6050AccelAngle(ACCEL_ZOUT), 2, 2, 8);
+        /***************发送端***************/
+        if(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1))
+        {
+            delay_ms(10);
+            while(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1));
+            Buf[2] = 0xAA;
+        }
+        if(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1))
+        {
+            delay_ms(10);
+            while(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1));
+            Buf[2] = 0xBB;
+        }
+        OLED_ShowString(1, 1, "Len:", 8);
+        OLED_ShowHexNum(1, 33, Buf[0], 2, 8);
+        OLED_ShowHexNum(3, 1, Buf[1], 2, 8);
+        OLED_ShowHexNum(3, 25, Buf[2], 2, 8);
+        OLED_ShowHexNum(5, 1, Buf[3], 2, 8);
+        OLED_ShowHexNum(5, 25, Buf[4], 2, 8);
+        OLED_ShowHexNum(7, 1, Buf[5], 2, 8);
+        OLED_ShowHexNum(7, 25, Buf[6], 2, 8);
+        NRF24L01_SendBuf(Buf);
+        /************************************/
 
-        OLED_ShowFloat(1, 65, Mpu6050GyroAngle(GYRO_XOUT), 2, 2, 8);
-        OLED_ShowFloat(3, 65, Mpu6050GyroAngle(GYRO_YOUT), 2, 2, 8);
-        OLED_ShowFloat(5, 65, Mpu6050GyroAngle(GYRO_ZOUT), 2, 2, 8);
-
-        UART_printf(USCI_A1_BASE, "%f\t%f\t%f\t%f\t%f\t%f\n",
-                    Mpu6050AccelAngle(ACCEL_XOUT),
-                    Mpu6050AccelAngle(ACCEL_YOUT),
-                    Mpu6050AccelAngle(ACCEL_ZOUT),
-                    Mpu6050GyroAngle(GYRO_XOUT),
-                    Mpu6050GyroAngle(GYRO_YOUT),
-                    Mpu6050GyroAngle(GYRO_ZOUT)
-                    );
+        /***************接收端***************/
+        // if (NRF24L01_Get_Value_Flag() == 0)
+        // {
+        //   NRF24L01_GetRxBuf(Buf);
+        // }
+        // OLED_ShowString(1, 1, "Len:", 8);
+        // OLED_ShowHexNum(1, 33, Buf[0], 2, 8);
+        // OLED_ShowHexNum(3, 1, Buf[1], 2, 8);
+        // OLED_ShowHexNum(3, 25, Buf[2], 2, 8);
+        // OLED_ShowHexNum(5, 1, Buf[3], 2, 8);
+        // OLED_ShowHexNum(5, 25, Buf[4], 2, 8);
+        // OLED_ShowHexNum(7, 1, Buf[5], 2, 8);
+        // OLED_ShowHexNum(7, 25, Buf[6], 2, 8);
+        /************************************/
     }
 }
