@@ -82,3 +82,45 @@ void UART_SendData(uint16_t baseAddress, uint8_t transmitData);
         }
     }
  ************************************************************************/
+
+/************************************************************************
+ *                          串口1接收pid参数                             *
+ ************************************************************************
+    // 串口1接收pid参数
+    if(get_Uart_RecStatus(USCI_A1_BASE))
+    {
+        uint8_t i;
+        char temp_pid[7];
+        float uart_p, uart_i, uart_d;
+        // 串口调节pid，格式：p1.234* 或 i1.234* 或 d1.234*
+        if(UART1_RX_BUF[0] == 'p' || UART1_RX_BUF[0] == 'i' || UART1_RX_BUF[0] == 'd')
+        {
+            // 读取串口传入的pid值
+            for(i = 0; i < get_Uart_RecLength(USCI_A1_BASE) - 1; i++)
+            {
+                temp_pid[i] = UART1_RX_BUF[i + 1];
+            }
+            if(UART1_RX_BUF[0] == 'p')
+            {
+                sscanf(temp_pid, "%f", &uart_p);
+                PID_Reset_pid(&MotorPID, 1, uart_p); // 重设位置式PID的Kp系数
+            }
+            if(UART1_RX_BUF[0] == 'i')
+            {
+                sscanf(temp_pid, "%f", &uart_i);
+                PID_Reset_pid(&MotorPID, 2, uart_i); // 重设位置式PID的Ki系数
+            }
+            if(UART1_RX_BUF[0] == 'd')
+            {
+                sscanf(temp_pid, "%f", &uart_d);
+                PID_Reset_pid(&MotorPID, 3, uart_d); // 重设位置式PID的Kd系数
+            }
+            UART_printf(USCI_A1_BASE, "OK\n");
+        }
+        else
+        {
+            UART_printf(USCI_A1_BASE, "ERROR\n");
+        }
+        Reset_Uart_RecStatus(USCI_A1_BASE);
+    }
+ ************************************************************************/

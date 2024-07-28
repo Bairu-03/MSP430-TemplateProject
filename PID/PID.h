@@ -8,107 +8,190 @@
 #ifndef PID_PID_H_
 #define PID_PID_H_
 
+#include "stdint.h"
+
 // PID的作用概述：
 // 1、P产生响应速度和力度，过小响应慢，过大会产生振荡，是I和D的基础。
 // 2、I在有系统误差和外力作用时消除偏差、提高精度，同时也会增加响应速度，产生过冲，过大会产生振荡。
 // 3、D抑制过冲和振荡，过小系统会过冲，过大会减慢响应速度。D的另外一个作用是抵抗外界的突发干扰，阻止系统的突变。
 
-// PID参数结构体
+// 位置式PID参数结构体
 typedef struct {
-    float Kp;  // 比例系数
-    float Ki;  // 积分系数
-    float Kd;  // 微分系数
+    float Kp, Ki, Kd;  // 比例、积分、微分系数
     float target; // 目标值
-    float last_error; // 上一次偏差
+    float error; // 偏差值
+    float last_error; // 前一次偏差
     float integral;   // 积分值
     float filtered_input; // 滤波后的输入值
     float maxIntegral, minIntegral; //积分限幅
     float maxOutput, minOutput; //输出限幅
 } PID;
 
+// 增量式PID参数结构体
+typedef struct {
+    float Kp, Ki, Kd;  // 比例、积分、微分系数
+    float target; // 目标值
+    float error; // 偏差值
+    float last_error; // 前一次偏差
+    float prev_error; // 前两次偏差
+    float maxOutput, minOutput; //输出限幅
+    float IncPID_Output;
+} IncPID;
+
 void PID_Init(PID *pid, float Kp, float Ki, float Kd, float target,
               float minIntegral, float maxIntegral,
               float minOutput, float maxOutput);
 void PID_ResetTarget(PID *pid, float target);
+void PID_Reset_pid(PID *pid, uint8_t Kx, float coefficient);
 float PID_Compute(PID *pid, float input);
 
+void IncPID_Init(IncPID *incpid, float Kp, float Ki, float Kd, float target,
+              float minOutput, float maxOutput);
+void IncPID_ResetTarget(IncPID *incpid, float target);
+void IncPID_Reset_pid(IncPID *incpid, uint8_t Kx, float coefficient);
+float IncPID_Compute(IncPID *incpid, float input);
 
 #endif /* PID_PID_H_ */
 
 /************************************************************************
- *                  PID控制例程 - 编码电机转速控制                      *
+ *             PID控制例程 - openMV寻迹小车控制（阿克曼转向）              *
  ************************************************************************
-    #include "driverlib/MSP430F5xx_6xx/driverlib.h"
-    #include "System/Sys_Clock.h"
-    #include "Hardware/OLED/OLED.h"
-    #include "Hardware/UART/MSP430F5529_UART.h"
-    #include "Hardware/Encoder/Encoder.h"
-    #include "Hardware/PWM/PWM.h"
-    #include "PID/PID.h"
+#include "driverlib.h"
+#include <stdio.h>
+#include "System/Sys_Clock.h"
+#include "Hardware/OLED/OLED.h"
+#include "Hardware/Car/Car.h"
+#include "Hardware/PWM/PWM.h"
+#include "Hardware/Encoder/Encoder.h"
+#include "Hardware/UART/MSP430F5529_UART.h"
+#include "PID/PID.h"
 
-    void main(void)
+void main(void)
+{
+    WDT_A_hold(WDT_A_BASE);
+    SystemClock_Init();
+    __bis_SR_register(GIE);
+
+    OLED_Init();
+    AScar_Init();
+    Encoder_Init();
+    UART_Init(USCI_A0_BASE, 115200);
+    UART_Init(USCI_A1_BASE, 115200);
+
+    // 驱动电机转速PID
+    PID MotorPID;
+    float Motor_Kp = 0.015, Motor_Ki = 0.014, Motor_Kd = 0.001;
+    float Motor_target = 370;
+    PID_Init(&MotorPID, Motor_Kp, Motor_Ki, Motor_Kd, Motor_target, -1850, 1850, 0, 100);
+    float Motor_now = 0;
+    float Motor_pidout = 0;
+
+    // 转向舵机PID
+    IncPID ServoPID;
+    float Servo_Kp = 0.05, Servo_Ki = 0, Servo_Kd = 0.01;
+    float Servo_target = 70;
+    IncPID_Init(&ServoPID, Servo_Kp, Servo_Ki, Servo_Kd, Servo_target, 4.5, 9.5);
+    float Servo_now = 0;
+    float Servo_pidout = 0;
+
+    OLED_ShowString(1, 1, "Snow:", 8);
+    OLED_ShowString(3, 1, "Spidout:", 8);
+    OLED_ShowString(5, 1, "Mnow:", 8);
+    OLED_ShowString(7, 1, "Mpidout:", 8);
+
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN1);
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
+
+    uint8_t runFlag = 0;
+    while(1)
     {
-        WDT_A_hold(WDT_A_BASE);
-        SystemClock_Init();
-
-        __bis_SR_register(GIE);
-
-        OLED_Init();
-
-        UART_Init(USCI_A1_BASE, 115200);
-
-        TA0_PWM_Init(TIMER_A_CLOCKSOURCE_SMCLK, TIMER_A_CLOCKSOURCE_DIVIDER_40, 624);
-        Encoder_Init();
-
-        PID pid_struct;    // 定义PID参数结构体变量
-
-        // 初始化PID参数
-        float Kp = 0.24, Ki = 0.035, Kd = 0.3;
-        float minIntegral = 0, maxIntegral = 100;
-        float minOutput = 0, maxOutput = 100;
-        float target = 100.5;
-        float realvalue = 0;
-        float pid_output = 0;
-        PID_Init(&pid_struct, Kp, Ki, Kd, target,
-                minIntegral, maxIntegral,
-                minOutput, maxOutput);
-
-        GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN1);
-        GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
-
-        OLED_ShowString(1, 1, "Target:", 8);
-        OLED_ShowString(3, 1, "Current:", 8);
-        OLED_ShowString(5, 1, "pid_out:", 8);
-
-        while(1)
+        // 串口1接收pid参数
+        if(get_Uart_RecStatus(USCI_A1_BASE))
         {
-            // 按键修改目标值
-            if(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1))
+            uint8_t i;
+            char temp_pid[7];
+            float uart_p, uart_i, uart_d;
+            // 串口调节pid，格式：p1.234* 或 i1.234* 或 d1.234*
+            if(UART1_RX_BUF[0] == 'p' || UART1_RX_BUF[0] == 'i' || UART1_RX_BUF[0] == 'd')
             {
-                target += 30;
-                while(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1));
+                // 读取串口传入的pid值
+                for(i = 0; i < get_Uart_RecLength(USCI_A1_BASE) - 1; i++)
+                {
+                    temp_pid[i] = UART1_RX_BUF[i + 1];
+                }
+                if(UART1_RX_BUF[0] == 'p')
+                {
+                    sscanf(temp_pid, "%f", &uart_p);
+                    PID_Reset_pid(&MotorPID, 1, uart_p);
+                }
+                if(UART1_RX_BUF[0] == 'i')
+                {
+                    sscanf(temp_pid, "%f", &uart_i);
+                    PID_Reset_pid(&MotorPID, 2, uart_i);
+                }
+                if(UART1_RX_BUF[0] == 'd')
+                {
+                    sscanf(temp_pid, "%f", &uart_d);
+                    PID_Reset_pid(&MotorPID, 3, uart_d);
+                }
+                UART_printf(USCI_A1_BASE, "OK\n");
             }
-            if(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1))
+            else
             {
-                target -= 15;
-                while(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1));
+                UART_printf(USCI_A1_BASE, "ERROR\n");
             }
-            PID_ResetTarget(&pid_struct, target);
-            OLED_ShowFloat(1, 57, target, 3, 2, 8);
+            Reset_Uart_RecStatus(USCI_A1_BASE);
+        }
 
-            // 读取电机当前转速
-            realvalue = getRotatingSpeed(P20);
-            OLED_ShowFloat(3, 65, realvalue, 3, 2, 8);
+        // 串口0接收openMV数据（寻迹偏移量）
+        if(get_Uart_RecStatus(USCI_A0_BASE))
+        {
+            uint8_t i;
+            for(i = 0; i < get_Uart_RecLength(USCI_A0_BASE); i++)
+            {
+                Servo_now = UART0_RX_BUF[i];
+            }
+            Reset_Uart_RecStatus(USCI_A0_BASE);
+        }
+        OLED_ShowNum(1, 41, Servo_now, 3, 8);
 
-            // 串口打印转速数据，配合vofa+可输出转速变化曲线
-            UART_printf(USCI_A1_BASE, "%.2f\n", realvalue);
+        // 驱动轮电机转速
+        Motor_now = getP20PulseNum();
+        OLED_ShowNum(5, 41, Motor_now, 4, 8);
 
-            // PID运算输出 - PWM
-            pid_output = PID_Compute(&pid_struct, realvalue);
-            OLED_ShowFloat(5, 65, pid_output, 3, 2, 8);
+        // 转向环PID
+        Servo_pidout = IncPID_Compute(&ServoPID, Servo_now);
+        // UART_printf(USCI_A1_BASE, "%.2f,%.2f\n", (Servo_now / 10.0), Servo_pidout);
+        OLED_ShowFloat(3, 65, Servo_pidout, 3, 2, 8);
 
-            // 根据PID输出更新P1.2脚PWM占空比
-            TA0_PWM_Duty(0, pid_output);
+        // 速度环PID
+        Motor_pidout = PID_Compute(&MotorPID, Motor_now);
+        UART_printf(USCI_A1_BASE, "%.2f\n", Motor_now);
+        OLED_ShowFloat(7, 65, Motor_pidout, 3, 2, 8);
+
+        // 按键控制小车启停
+        if(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1))
+        {
+            delay_ms(10);
+            while(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1));
+            runFlag = 1;
+        }
+        if(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1))
+        {
+            delay_ms(10);
+            while(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1));
+            runFlag = 0;
+        }
+
+        if(runFlag)
+        {
+            PID_ResetTarget(&MotorPID, Motor_target);
+            AScar_Status(Car_F, 0, Motor_pidout, Servo_pidout);
+        } else {
+            PID_ResetTarget(&MotorPID, 0);
+            AScar_Status(Car_Stop, 0, 0, 7.8);
         }
     }
+}
+
  ************************************************************************/

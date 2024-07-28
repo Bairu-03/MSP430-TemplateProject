@@ -62,10 +62,6 @@ void writeByte(uint8_t byte)
     i2c_buf_cur = 1;
     i2c_buf_len = 1;
     USCI_B_I2C_masterSendMultiByteStart(I2C_USCI_BASE, i2c_buf[0]);
-
-    // 等待结束
-    __bis_SR_register(GIE + LPM0_bits);
-    __no_operation();
 }
 
 /* 向特定寄存器写入一个字，不能在中断上下文中调用 */
@@ -81,10 +77,6 @@ void writeWord(uint16_t word)
     i2c_buf_cur = 1;
     i2c_buf_len = 2;
     USCI_B_I2C_masterSendMultiByteStart(I2C_USCI_BASE, i2c_buf[0]);
-
-    // 等待结束
-    __bis_SR_register(GIE + LPM0_bits);
-    __no_operation();
 }
 
 ///* 设置/清除特定寄存器的某些位，不能在中断上下文中调用 */
@@ -113,10 +105,6 @@ void readByte(uint8_t RegAddr, uint8_t* b)
     i2c_rx_buf = b;
     i2c_rx_buf_len = 1;
     USCI_B_I2C_masterReceiveSingleStart(I2C_USCI_BASE);
-
-    // 等待结束
-    __bis_SR_register(GIE + LPM0_bits);
-    __no_operation();
 }
 
 void readBytes(uint8_t RegAddr, uint8_t length, uint8_t* data)
@@ -133,10 +121,6 @@ void readBytes(uint8_t RegAddr, uint8_t length, uint8_t* data)
     i2c_rx_buf = data;
     i2c_rx_buf_len = length;
     USCI_B_I2C_masterReceiveMultiByteStart(I2C_USCI_BASE);
-
-    // 等待结束
-    __bis_SR_register(GIE + LPM0_bits);
-    __no_operation();
 }
 
 #pragma vector = I2C_USCI_VECTOR
@@ -156,7 +140,6 @@ __interrupt void USCI_B0_ISR(void)
                 // 清除主中断状态
                 USCI_B_I2C_clearInterrupt(I2C_USCI_BASE,
                                           USCI_B_I2C_TRANSMIT_INTERRUPT);
-                __bic_SR_register_on_exit(LPM0_bits);
             }
             break;
         case USCI_I2C_UCRXIFG:
@@ -178,7 +161,6 @@ __interrupt void USCI_B0_ISR(void)
             {
                 // 接收最后一个字节
                 *i2c_rx_buf= USCI_B_I2C_masterReceiveMultiByteNext(I2C_USCI_BASE);
-                __bic_SR_register_on_exit(LPM0_bits);
             }
             break;
     }
