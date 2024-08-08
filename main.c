@@ -23,14 +23,14 @@ void main(void)
     // 驱动电机转速PID
     PID MotorPID;
     float Motor_Kp = 0.015, Motor_Ki = 0.014, Motor_Kd = 0.001;
-    float Motor_target = 370;
+    float Motor_target = 555;
     PID_Init(&MotorPID, Motor_Kp, Motor_Ki, Motor_Kd, Motor_target, -1850, 1850, 0, 100);
     float Motor_now = 0;
     float Motor_pidout = 0;
 
     // 转向舵机PID
     IncPID ServoPID;
-    float Servo_Kp = 0.05, Servo_Ki = 0, Servo_Kd = 0.01;
+    float Servo_Kp = 0.038, Servo_Ki = 0, Servo_Kd = 0;
     float Servo_target = 70;
     IncPID_Init(&ServoPID, Servo_Kp, Servo_Ki, Servo_Kd, Servo_target, 4.5, 9.5);
     float Servo_now = 0;
@@ -64,17 +64,17 @@ void main(void)
                 if(UART1_RX_BUF[0] == 'p')
                 {
                     sscanf(temp_pid, "%f", &uart_p);
-                    PID_Reset_pid(&MotorPID, 1, uart_p);
+                    IncPID_Reset_pid(&ServoPID, K_p, uart_p);
                 }
                 if(UART1_RX_BUF[0] == 'i')
                 {
                     sscanf(temp_pid, "%f", &uart_i);
-                    PID_Reset_pid(&MotorPID, 2, uart_i);
+                    IncPID_Reset_pid(&ServoPID, K_i, uart_i);
                 }
                 if(UART1_RX_BUF[0] == 'd')
                 {
                     sscanf(temp_pid, "%f", &uart_d);
-                    PID_Reset_pid(&MotorPID, 3, uart_d);
+                    IncPID_Reset_pid(&ServoPID, K_d, uart_d);
                 }
                 UART_printf(USCI_A1_BASE, "OK\n");
             }
@@ -108,7 +108,7 @@ void main(void)
 
         // 速度环PID
         Motor_pidout = PID_Compute(&MotorPID, Motor_now);
-        UART_printf(USCI_A1_BASE, "%.2f\n", Motor_now);
+        // UART_printf(USCI_A1_BASE, "%.2f\n", Motor_now);
         OLED_ShowFloat(7, 65, Motor_pidout, 3, 2, 8);
 
         // 按键控制小车启停
