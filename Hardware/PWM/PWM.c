@@ -95,7 +95,7 @@ void TA0_PWM_Init(uint8_t PWMnum, uint16_t clockSource, uint16_t psc, uint16_t a
  *      - \b 3 : P1.5
  * @param  Duty PWM占空比。
  *     @arg 取值: 0 - 100.0
- * @retval
+ * @retval 无
  */
 void TA0_PWM_Duty(uint8_t CHx, float Duty)
 {
@@ -188,7 +188,7 @@ void TA1_PWM_Init(uint8_t PWMnum, uint16_t clockSource, uint16_t psc, uint16_t a
  *      - \b 0 : P2.0
  * @param  Duty PWM占空比。
  *     @arg 取值: 0 - 100.0
- * @retval
+ * @retval 无
  */
 void TA1_PWM_Duty(uint8_t CHx, float Duty)
 {
@@ -280,7 +280,7 @@ void TA2_PWM_Init(uint8_t PWMnum, uint16_t clockSource, uint16_t psc, uint16_t a
  *      - \b 1 : P2.5
  * @param  Duty PWM占空比。
  *     @arg 取值: 0 - 100.0
- * @retval
+ * @retval 无
  */
 void TA2_PWM_Duty(uint8_t CHx, float Duty)
 {

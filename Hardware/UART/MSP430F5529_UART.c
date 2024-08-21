@@ -1,9 +1,11 @@
-/*
- * MSP430F5529_UART.c
- *
- *  Created on: 2024年7月16日
- *      Author: Bairu
+/**
+ * @file    MSP430F5529_UART.c
+ * @version v1.1
+ * @author  Bairu
+ * @date    2024年7月16日
+ * @brief   MSP430F5529串口驱动
  */
+
 #include "driverlib.h"
 #include "MSP430F5529_UART.h"
 #include <string.h>
@@ -11,21 +13,23 @@
 #include <stdio.h>
 
 /**
- * 接收状态标志
- * bit15，接收完成标志（0x0a）
- * bit14，接收到0x0d
- * bit13~bit0，接收到的有效字节数
+ * 串口0、串口1接收状态标志。
+ * bit15，接收到0x0a置1，接收完成；
+ * bit14，接收到0x0d置1；
+ * bit13~bit0，接收到的有效字节数。
  */
 uint16_t UART0_RX_STA = 0;
 uint16_t UART1_RX_STA = 0;
 
 /**
+ * P3.3-TXD | P3.4-RXD
  * 串口0接收缓冲数组，最大USART_REC_LEN个字节，末字节为换行符
  * 在取完串口数据后，需要用Reset_Uart_RecStatus(USCI_A0_BASE)初始化串口接收标志
  */
 uint8_t UART0_RX_BUF[UART_REC_LEN];    // P3.3-TXD | P3.4-RXD
 
 /**
+ * P4.4-TXD | P4.5-RXD
  * 串口1接收缓冲数组，最大USART_REC_LEN个字节，末字节为换行符
  * 在取完串口数据后，需要用Reset_Uart_RecStatus(USCI_A1_BASE)初始化串口接收标志
  */
@@ -163,7 +167,7 @@ uint8_t get_Uart_RecStatus(uint16_t baseAddress)
 }
 
 /**
- * @brief  获取串口接收数组UART_RX_BUF的长度
+ * @brief  获取串口接收到的数据的长度
  * @param  baseAddress 串口基址
  *      @arg 有效取值:
  *          - \b USCI_A0_BASE -> P3.3-TXD | P3.4-RXD

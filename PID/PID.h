@@ -1,8 +1,9 @@
-/*
- * PID.h
- *
- *  Created on: 2024年7月17日
- *      Author: Bairu
+/**
+ * @file    PID.h
+ * @version v1.3
+ * @author  Bairu
+ * @date    2024年8月21日 16:09:44
+ * @brief   PID算法头文件，定义PID参数结构体及函数
  */
 
 #ifndef __PID_H

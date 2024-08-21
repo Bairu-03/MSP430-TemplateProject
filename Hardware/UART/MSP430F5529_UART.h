@@ -1,8 +1,9 @@
-/*
- * MSP430F5529_UART.h
- *
- *  Created on: 2024年7月16日
- *      Author: Bairu
+/**
+ * @file    MSP430F5529_UART.h
+ * @version v1.1
+ * @author  Bairu
+ * @date    2024年7月16日
+ * @brief   MSP430F5529串口驱动头文件
  */
 
 #ifndef MSP430F5529_UART_H_
@@ -10,8 +11,8 @@
 
 #define UART_REC_LEN 200 // 定义最大接收字节数 200
 
-extern uint8_t UART0_RX_BUF[UART_REC_LEN];    // P3.3-TXD | P3.4-RXD
-extern uint8_t UART1_RX_BUF[UART_REC_LEN];    // P4.4-TXD | P4.5-RXD
+extern uint8_t UART0_RX_BUF[UART_REC_LEN];
+extern uint8_t UART1_RX_BUF[UART_REC_LEN];
 
 void UART_printf(uint16_t baseAddress, const char *format,...);
 bool UART_Init(uint16_t baseAddress, uint32_t Baudrate);

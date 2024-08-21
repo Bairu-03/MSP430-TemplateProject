@@ -1,8 +1,9 @@
-/*
- * PID.c
- *
- *  Created on: 2024年7月17日
- *      Author: Bairu
+/**
+ * @file    PID.c
+ * @version v1.3
+ * @author  Bairu
+ * @date    2024年8月21日 16:09:44
+ * @brief   PID算法(位置式、增量式)
  */
 
 #include "PID.h"
@@ -53,9 +54,9 @@ void PID_ResetTarget(PID *pid, float target)
  * @param  pid PID参数结构体
  * @param  K_x 要修改的系数
  *      @arg 有效取值:
- *          - \b K_p : Kp
- *          - \b K_i : Ki
- *          - \b K_d : Kd
+ *          - \b K_p : p项系数
+ *          - \b K_i : i项系数
+ *          - \b K_d : d项系数
  * @param  value 系数的新值
  * @retval 无
  */
@@ -151,9 +152,9 @@ void IncPID_ResetTarget(IncPID *incpid, float target)
  * @param  pid PID参数结构体
  * @param  K_x 要修改的系数
  *      @arg 有效取值:
- *          - \b K_p : Kp
- *          - \b K_i : Ki
- *          - \b K_d : Kd
+ *          - \b K_p : p项系数
+ *          - \b K_i : i项系数
+ *          - \b K_d : d项系数
  * @param  value 系数的新值
  * @retval 无
  */

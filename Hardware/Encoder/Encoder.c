@@ -58,9 +58,11 @@ uint16_t getP22PulseNum(void)
     return P22PulseNumber;
 }
 
+#warning "注意: TA1、P2中断服务函数已在Encoder.c中定义,在其他位置重写会导致重复定义问题"
+
 // TA1定时中断，每50ms执行一次，取脉冲数并清零
 #pragma vector=TIMER1_A0_VECTOR
-__interrupt void TIMER1_A0_ISR (void)
+__interrupt void TIMER1_A0_ISR(void)
 {
     P20PulseNumber = P20_Count;
     P22PulseNumber = P22_Count;
@@ -70,7 +72,7 @@ __interrupt void TIMER1_A0_ISR (void)
 
 // P2.0，P2.2中断，每次中断计数+1
 #pragma vector=PORT2_VECTOR
-__interrupt void Port2_interrupt(void)
+__interrupt void Port2_ISR(void)
 {
     if(GPIO_getInterruptStatus(GPIO_PORT_P2, GPIO_PIN0))
     {
