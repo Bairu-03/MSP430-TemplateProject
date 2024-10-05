@@ -1,10 +1,17 @@
 /**
- * @file    PID.h
- * @version v1.3
- * @author  Bairu
- * @date    2024年8月21日 16:09:44
- * @brief   PID算法头文件，定义PID参数结构体及函数
- */
+  *****************************************************************************
+  * @file    PID.h
+  * @version v1.3
+  * @author  Bairu
+  * @date    2024年8月21日 16:09:52
+  * @brief   PID算法头文件，定义PID参数结构体及函数
+  *****************************************************************************
+  * @copyright (c) 2024 Bairu. All Rights Reserved.
+  *
+  * Distributed under MIT license.
+  * See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+  *****************************************************************************
+  */
 
 #ifndef __PID_H
 #define __PID_H

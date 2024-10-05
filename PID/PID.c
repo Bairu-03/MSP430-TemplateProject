@@ -1,10 +1,17 @@
 /**
- * @file    PID.c
- * @version v1.3
- * @author  Bairu
- * @date    2024年8月21日 16:09:44
- * @brief   PID算法(位置式、增量式)
- */
+  *****************************************************************************
+  * @file    PID.c
+  * @version v1.3
+  * @author  Bairu
+  * @date    2024年8月21日 16:09:44
+  * @brief   PID算法(位置式、增量式)
+  *****************************************************************************
+  * @copyright (c) 2024 Bairu. All Rights Reserved.
+  *
+  * Distributed under MIT license.
+  * See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+  *****************************************************************************
+  */
 
 #include "PID.h"
 
